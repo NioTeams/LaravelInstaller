@@ -161,10 +161,19 @@ return [
             'title' => 'Classic Environment Editor',
             'save' => 'Save .env',
             'back' => 'Use Form Wizard',
-            'install' => 'Save and Install',
+            'install' => 'Continue to Install',
+        ],
+        'manual' => [
+            'templateTitle' => 'Step 3 | Environment Settings | Manual Setup',
+            'title' => 'Manually Setup',
+            'save' => 'Save .env',
+            'back' => 'Use Form Wizard',
+            'install' => 'Continue to Install',
         ],
         'success' => 'Your .env file settings have been saved.',
         'errors' => 'Unable to save the .env file, Please create it manually.',
+        'form_errors' => 'Form validation errors.',
+        'db_connection_error' => 'Unable to connect database!',
     ],
 
     'install' => 'Install',
@@ -192,7 +201,8 @@ return [
         'console' => 'Application Console Output:',
         'log' => 'Installation Log Entry:',
         'env' => 'Final .env File:',
-        'exit' => 'Click here to exit'
+        'exit' => 'Complete Installation',
+        'download' => 'Download the File'
     ],
 
     /**

@@ -31,6 +31,16 @@ Route::group(['prefix' => 'install','as' => 'LaravelInstaller::','namespace' => 
         'uses' => 'EnvironmentController@saveClassic'
     ]);
 
+    Route::get('environment/manual', [
+        'as' => 'environmentManual',
+        'uses' => 'EnvironmentController@environmentManual'
+    ]);
+
+    Route::post('environment/saveManual', [
+        'as' => 'environmentSaveManual',
+        'uses' => 'EnvironmentController@saveManual'
+    ]);
+
     Route::get('requirements', [
         'as' => 'requirements',
         'uses' => 'RequirementsController@requirements'
@@ -49,6 +59,11 @@ Route::group(['prefix' => 'install','as' => 'LaravelInstaller::','namespace' => 
     Route::get('final', [
         'as' => 'final',
         'uses' => 'FinalController@finish'
+    ]);
+
+    Route::get('finalFile', [
+        'as' => 'finalInstalled',
+        'uses' => 'FinalController@file'
     ]);
 
 });

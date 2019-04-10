@@ -9,6 +9,7 @@ use Softnio\LaravelInstaller\Helpers\EnvironmentManager;
 use Softnio\LaravelInstaller\Events\EnvironmentSaved;
 use Validator;
 use DB;
+use Exception;
 
 class EnvironmentController extends Controller
 {
@@ -47,6 +48,7 @@ class EnvironmentController extends Controller
         return view('vendor.installer.environment-wizard', compact('envConfig'));
     }
 
+    
     /**
      * Display the Environment page.
      *
@@ -55,15 +57,7 @@ class EnvironmentController extends Controller
     public function environmentClassic()
     {
         $envConfig = $this->EnvironmentManager->getEnvContent();
-        
-        try{
-            DB::connection()->getPdo();
-            $checkConnection = (DB::connection()->getDatabaseName()) ? true : false;
-        }catch(Exception $e){
-           $checkConnection = false;
-        }
-
-        return view('vendor.installer.environment-classic', compact('envConfig', 'checkConnection'));
+        return view('vendor.installer.environment-classic', compact('envConfig'));
     }
 
     /**
@@ -76,7 +70,41 @@ class EnvironmentController extends Controller
     public function saveClassic(Request $input, Redirector $redirect)
     {
         $message = $this->EnvironmentManager->saveFileClassic($input);
-        $results = $this->EnvironmentManager->saveFileWizard($request);
+        event(new EnvironmentSaved($input));
+        return $redirect->route('LaravelInstaller::environmentClassic')
+                        ->with(['message' => $message]);
+    }
+
+
+    /**
+     * Display the Environment page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function environmentManual()
+    {
+        $envConfig = $this->EnvironmentManager->getEnvContent();
+        
+        try{
+            DB::connection()->getPdo();
+            $checkConnection = true;
+        }catch(Exception $e){
+           $checkConnection = false;
+        }
+
+        return view('vendor.installer.environment-manual', compact('envConfig', 'checkConnection'));
+    }
+
+    /**
+     * Processes the newly saved environment configuration (Classic).
+     *
+     * @param Request $input
+     * @param Redirector $redirect
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveManual(Request $input, Redirector $redirect)
+    {
+        $results = $this->EnvironmentManager->saveFileClassic($input);
         
         $message = (isset($results['message']) ? $results['message'] : '');
         $response = (isset($results['response']) ? $results['response'] : '');
@@ -121,6 +149,7 @@ class EnvironmentController extends Controller
 
         if ($validator->fails()) {
             $errors = $validator->errors();
+            session()->flash('form_errors', trans('installer_messages.environment.form_errors'));
             return view('vendor.installer.environment-wizard', compact('errors', 'envConfig'));
         }
         if(testDatabaseConnection($request->database_hostname, $request->database_username, $request->database_password, $request->database_name)){
@@ -132,7 +161,7 @@ class EnvironmentController extends Controller
 
             if($response == false){
                 session(['envConfigData' => $this->EnvironmentManager->fileData($request)]);
-                return $redirect->route('LaravelInstaller::environmentClassic')
+                return $redirect->route('LaravelInstaller::environmentManual')
                 ->with(['message' => empty($message) ? trans('installer_messages.environment.errors') : $message]);
             }
 
@@ -141,7 +170,7 @@ class EnvironmentController extends Controller
             return $redirect->route('LaravelInstaller::database')
                             ->with(['results' => $results]);
         }else{
-            return $redirect->route('LaravelInstaller::environmentWizard');
+            return $redirect->route('LaravelInstaller::environmentWizard')->with(['db_errors' => trans('installer_messages.environment.db_connection_error')]);
         }
     }
 }

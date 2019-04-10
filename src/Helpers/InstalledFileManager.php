@@ -17,8 +17,11 @@ class InstalledFileManager
 
         $dateStamp = date("Y/m/d h:i:sa");
 
+        $extra = 'success';
+
         if( ! $this->check_storage()) {
-            return trans('installer_messages.installed.failed_to_write');
+            $extra = 'warning';
+            return ['message' => trans('installer_messages.installed.failed_to_write'), 'extra' => $extra];
         }
 
         if (!file_exists($installedLogFile))
@@ -42,7 +45,7 @@ class InstalledFileManager
             
         }
 
-        return $message;
+        return ['message' => $message, 'extra' => $extra];
     }
 
     /**

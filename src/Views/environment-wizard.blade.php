@@ -12,7 +12,12 @@
 @section('container')
     @if(session()->has('db_errors'))
     <div class="alert alert-danger">
-        <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>{{ session('db_errors') }}
+        <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> {{ session('db_errors') }}
+    </div>
+    @endif
+    @if(session()->has('form_errors'))
+    <div class="alert alert-danger">
+        <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> {{ session('form_errors') }}
     </div>
     @endif
     <div class="tabs tabs-full">
