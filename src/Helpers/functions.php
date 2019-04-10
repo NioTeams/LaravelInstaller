@@ -32,7 +32,7 @@ if ( ! function_exists('testDatabaseConnection'))
      * @param string | databaseName
      * @return bool
      */
-    private function testDatabaseConnection($hostname, $username, $password, $name){
+    function testDatabaseConnection($hostname, $username, $password, $name){
         try {
             $connection = mysqli_connect($hostname, $username, $password, $name);
             if (mysqli_connect_errno()){

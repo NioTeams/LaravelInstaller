@@ -7,7 +7,7 @@ return [
      * Shared translations.
      *
      */
-    'title' => 'Laravel Installer',
+    'title' => 'Nio Laravel Installer',
     'next' => 'Next Step',
     'back' => 'Previous',
     'finish' => 'Install',
@@ -22,7 +22,7 @@ return [
      */
     'welcome' => [
         'templateTitle' => 'Welcome',
-        'title'   => 'Laravel Installer',
+        'title'   => 'Nio Laravel Installer',
         'message' => 'Easy Installation and Setup Wizard.',
         'next'    => 'Check Requirements',
     ],
@@ -176,6 +176,7 @@ return [
      */
     'installed' => [
         'success_log_message' => 'Laravel Installer successfully INSTALLED on ',
+        'failed_to_write' => "Application is installed but failed to write `installed` file in storage path."
     ],
 
     /**
@@ -187,11 +188,11 @@ return [
         'title' => 'Installation Finished',
         'templateTitle' => 'Installation Finished',
         'finished' => 'Application has been successfully installed.',
-        'migration' => 'Migration &amp; Seed Console Output:',
+        'migration' => 'Migration & Seed Console Output:',
         'console' => 'Application Console Output:',
         'log' => 'Installation Log Entry:',
         'env' => 'Final .env File:',
-        'exit' => 'Click here to exit',
+        'exit' => 'Click here to exit'
     ],
 
     /**
