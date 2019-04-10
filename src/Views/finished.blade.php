@@ -41,7 +41,7 @@
     <div class="buttons">
         <a href="{{ route('LaravelInstaller::finalInstalled') }}" class="button">{{ trans('installer_messages.final.download') }}</a>
     </div>
-<p>&nbsp;</p>
+	<p>&nbsp;</p>
 	<div class="alert "><p><em>Caution: If you do not placed the 'installed' file then application will be redirect to installation page again.</em></p></div>
     @endif
 
