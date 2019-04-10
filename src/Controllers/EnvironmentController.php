@@ -115,18 +115,18 @@ class EnvironmentController extends Controller
                 if(\DB::connection()->getDatabaseName()){
                     session()->forget('envConfigData');
                     event(new EnvironmentSaved($input));
-                    return $redirect->route('LaravelInstaller::environmentClassic')
+                    return $redirect->route('LaravelInstaller::environmentManual')
                         ->with(['message' => $message, 'showInstallButton' => true]);
                 }else{
-                    return $redirect->route('LaravelInstaller::environmentClassic')
+                    return $redirect->route('LaravelInstaller::environmentManual')
                         ->with(['message' => 'Wrong database connection!']);
                 }
             } catch (\Exception $e) {
-                return $redirect->route('LaravelInstaller::environmentClassic')
+                return $redirect->route('LaravelInstaller::environmentManual')
                         ->with(['message' => 'Wrong database connection!']);
             }
         }else{
-            return $redirect->route('LaravelInstaller::environmentClassic')
+            return $redirect->route('LaravelInstaller::environmentManual')
                         ->with(['message' => $message]);
         }
     }
