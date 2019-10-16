@@ -35,7 +35,7 @@ The current features are :
 1. From your projects root folder in terminal run:
 
 ```bash
-    composer require Softnio/laravel-installer
+    composer require softnio/laravel-installer
 ```
 
 2. Register the package
@@ -84,8 +84,8 @@ Register the package with laravel in `config/app.php` under `providers` with the
 
 ## Contributing
 
-* If you have any suggestions please let me know : https://github.com/Softnio/LaravelInstaller/pulls.
-* Please help us provide more languages for this awesome package please send a pull request https://github.com/Softnio/LaravelInstaller/pulls.
+* If you have any suggestions please let me know : https://gitlab.com/msa-rakib/LaravelInstaller/.
+* Please help us provide more languages for this awesome package please send a pull request https://gitlab.com/msa-rakib/LaravelInstaller/.
 
 ## Help
 

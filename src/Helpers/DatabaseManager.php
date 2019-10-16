@@ -40,7 +40,29 @@ class DatabaseManager
             return $this->response($e->getMessage(), 'error', $outputLog);
         }
 
-        return $this->seed($outputLog);
+        return $this->seed( $this->additionalCommand($outputLog) );
+    }
+
+    /**
+     * Run the additional artisan command after migration
+     *
+     * @param \Symfony\Component\Console\Output\BufferedOutput $outputLog
+     * @return $outputLog
+     */
+    public function additionalCommand(BufferedOutput $outputLog)
+    {
+        $additionals = config('installer.artisan');
+        if( $additionals && is_array($additionals) ){
+            foreach ($additionals as $command) {
+                try{
+                    Artisan::call("{$command}", [],  $outputLog);
+                }
+                catch(Exception $e){
+                    return $this->response($e->getMessage(), 'error', $outputLog);
+                }
+            }
+        }
+        return $outputLog;
     }
 
     /**
