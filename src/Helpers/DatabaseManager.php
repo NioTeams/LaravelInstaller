@@ -58,7 +58,7 @@ class DatabaseManager
                     Artisan::call("{$command}", [],  $outputLog);
                 }
                 catch(Exception $e){
-                    return $this->response($e->getMessage(), 'error', $outputLog);
+                    $outputLog->doWrite($e->getMessage(), true);
                 }
             }
         }
