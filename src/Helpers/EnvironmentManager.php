@@ -113,7 +113,7 @@ class EnvironmentManager
      */
     public function fileData(Request $request)
     {
-        $key = is_writable($this->envPath) ? "base64:hcd7LG5XWs+r30DggGLIesbPjaqGHq9ng7mGN557T2U=\n" : $this->getNewKey();
+        $key = $this->getNewKey();
         $data = 'APP_NAME=\'' . $request->app_name . "'\n" .
         'APP_VERSION=\'' . config('app.version') . "'\n" . // Added
         'APP_ENV=' . $request->environment . "\n" .
