@@ -1,6 +1,5 @@
 <?php
 
-
 return [
 
     /*
@@ -14,11 +13,11 @@ return [
     |
     */
     'core' => [
-        'minPhpVersion' => '7.0.0'
+        'minPhpVersion' => '7.0.0',
     ],
     'final' => [
         'key' => true,
-        'publish' => false
+        'publish' => false,
     ],
     'requirements' => [
         'php' => [
@@ -33,19 +32,35 @@ return [
             'mod_rewrite',
         ],
     ],
+	
+	
 
     /*
     |--------------------------------------------------------------------------
-    | Artisan Commands
+    | Artisan Command
     |--------------------------------------------------------------------------
     |
-    | Run aditional artisan command after install or migrations 
-    | Just add your command to this array below.
+    | Here you can define your necessary command,
+    | This will be run when migration was completed
     |
     */
     'artisan' => [
-        'config:clear'
+        'config:clear', 
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Environment Wizard Option
+    |--------------------------------------------------------------------------
+    |
+    | Here you can define your wizard
+    |
+    */
+	'wizard' => [
+		'environment' => true,
+		'database' => true,
+		'application' => true,
+	],
 
     /*
     |--------------------------------------------------------------------------
@@ -59,7 +74,7 @@ return [
     'permissions' => [
         'storage/framework/'     => '775',
         'storage/logs/'          => '775',
-        'bootstrap/cache/'       => '775'
+        'bootstrap/cache/'       => '775',
     ],
 
     /*
@@ -125,7 +140,7 @@ return [
             ],
             'dump' => [
                 'data' => 'Dumping a not found message.',
-            ]
+            ],
         ],
     ],
 

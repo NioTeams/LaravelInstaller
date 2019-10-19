@@ -1,9 +1,10 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
 use Illuminate\Routing\Controller;
-use Softnio\LaravelInstaller\Helpers\DatabaseManager;
+use Illuminate\Support\Facades\DB;
+use Nio\LaravelInstaller\Helpers\DatabaseManager;
 
 class DatabaseController extends Controller
 {
@@ -27,9 +28,25 @@ class DatabaseController extends Controller
      */
     public function database()
     {
+        if ( ! $this->checkDatabaseConnection() ){
+            return redirect()->route('LaravelInstaller::environmentWizard')->withInput()->withErrors([
+                'database_connection' => trans('installer_messages.environment.wizard.form.db_connection_failed'),
+            ]);
+        }
         $response = $this->databaseManager->migrateAndSeed();
+        session()->forget('envConfigData');
 
         return redirect()->route('LaravelInstaller::final')
                          ->with(['message' => $response]);
+    }
+
+    public function checkDatabaseConnection()
+    {
+        try {
+            DB::connection()->getPdo();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Helpers;
+namespace Nio\LaravelInstaller\Helpers;
 
 use Exception;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ class EnvironmentManager
      */
     public function getEnvContent()
     {
-        if (!file_exists($this->envPath)) {
+        if (! file_exists($this->envPath)) {
             if (file_exists($this->envExamplePath)) {
                 copy($this->envExamplePath, $this->envPath);
             } else {
@@ -51,7 +51,8 @@ class EnvironmentManager
      *
      * @return string
      */
-    public function getEnvPath() {
+    public function getEnvPath()
+    {
         return $this->envPath;
     }
 
@@ -60,8 +61,14 @@ class EnvironmentManager
      *
      * @return string
      */
-    public function getEnvExamplePath() {
+    public function getEnvExamplePath()
+    {
         return $this->envExamplePath;
+    }
+
+    public function checkIsEnvFileWritable()
+    {
+        return is_writable( $this->getEnvPath() );
     }
 
     /**
@@ -72,13 +79,12 @@ class EnvironmentManager
      */
     public function saveFileClassic(Request $input)
     {
-        $message = ['response' => true,'message' => trans('installer_messages.environment.success')];
+        $message = trans('installer_messages.environment.success');
 
         try {
             file_put_contents($this->envPath, $input->get('envConfig'));
-        }
-        catch(Exception $e) {
-            $message = ['response' => false,'message' => trans('installer_messages.environment.errors')];
+        } catch (Exception $e) {
+            $message = trans('installer_messages.environment.errors');
         }
 
         return $message;
@@ -92,18 +98,20 @@ class EnvironmentManager
      */
     public function saveFileWizard(Request $request)
     {
-        $results = ['response' => true,'message' => trans('installer_messages.environment.success')];
+        $results = trans('installer_messages.environment.success');
 
         $envFileData = $this->fileData($request);
 
         try {
             file_put_contents($this->envPath, $envFileData);
         } catch (Exception $e) {
-            $results = ['response' => false,'message' => trans('installer_messages.environment.errors')];
+            $results = trans('installer_messages.environment.errors');
         }
 
         return $results;
     }
+
+    
 
     /**
      * Get content of the .env file.
@@ -113,41 +121,40 @@ class EnvironmentManager
      */
     public function fileData(Request $request)
     {
-        $key = is_writable($this->envPath) ? "base64:hcd7LG5XWs+r30DggGLIesbPjaqGHq9ng7mGN557T2U=\n" : $this->getNewKey();
+        $key = $this->getNewKey();
         $data = 'APP_NAME=\'' . $request->app_name . "'\n" .
-        'APP_VERSION=\'' . config('app.version') . "'\n" . // Added
-        'APP_ENV=' . $request->environment . "\n" .
-        'APP_KEY=' . $key .
-        'APP_DEBUG=' . $request->app_debug . "\n" .
-        'APP_LOG_LEVEL=' . $request->app_log_level . "\n" .
-        'APP_URL=' . $request->app_url . "\n\n" .
-        'FORCE_HTTPS=' . $request->is_https . "\n" . // Added
-        'DB_CONNECTION=' . $request->database_connection . "\n" .
-        'DB_HOST=' . $request->database_hostname . "\n" .
-        'DB_PORT=' . $request->database_port . "\n" .
-        'DB_DATABASE=' . $request->database_name . "\n" .
-        'DB_USERNAME=' . $request->database_username . "\n" .
-        'DB_PASSWORD=' . $request->database_password . "\n\n" .
-        'BROADCAST_DRIVER=' . $request->broadcast_driver . "\n" .
-        'CACHE_DRIVER=' . $request->cache_driver . "\n" .
-        'SESSION_DRIVER=' . $request->session_driver . "\n" .
-        'QUEUE_DRIVER=' . $request->queue_driver . "\n\n" .
-        'REDIS_HOST=' . $request->redis_hostname . "\n" .
-        'REDIS_PASSWORD=' . $request->redis_password . "\n" .
-        'REDIS_PORT=' . $request->redis_port . "\n\n" .
-        'MAIL_DRIVER=' . $request->mail_driver . "\n" .
-        'MAIL_HOST=' . $request->mail_host . "\n" .
-        'MAIL_PORT=' . $request->mail_port . "\n" .
-        'MAIL_USERNAME=' . $request->mail_username . "\n" .
-        'MAIL_PASSWORD=' . $request->mail_password . "\n" .
-        'MAIL_ENCRYPTION=' . $request->mail_encryption . "\n\n" .
-        'PUSHER_APP_ID=' . $request->pusher_app_id . "\n" .
-        'PUSHER_APP_KEY=' . $request->pusher_app_key . "\n" .
-        'PUSHER_APP_SECRET=' . $request->pusher_app_secret;
+            'APP_VERSION=\'' . config('app.version') . "'\n" . // Added
+            'APP_ENV=' . $request->environment . "\n" .
+            'APP_KEY=' . $key .
+            'APP_DEBUG=' . $request->app_debug . "\n" .
+            'APP_LOG_LEVEL=' . $request->app_log_level . "\n" .
+            'APP_URL=' . $request->app_url . "\n\n" .
+            'FORCE_HTTPS=' . $request->is_https . "\n" . // Added
+            'DB_CONNECTION=' . $request->database_connection . "\n" .
+            'DB_HOST=' . $request->database_hostname . "\n" .
+            'DB_PORT=' . $request->database_port . "\n" .
+            'DB_DATABASE=' . $request->database_name . "\n" .
+            'DB_USERNAME=' . $request->database_username . "\n" .
+            'DB_PASSWORD=' . $request->database_password . "\n\n" .
+            'BROADCAST_DRIVER=' . $request->broadcast_driver . "\n" .
+            'CACHE_DRIVER=' . $request->cache_driver . "\n" .
+            'SESSION_DRIVER=' . $request->session_driver . "\n" .
+            'QUEUE_DRIVER=' . $request->queue_driver . "\n\n" .
+            'REDIS_HOST=' . $request->redis_hostname . "\n" .
+            'REDIS_PASSWORD=' . $request->redis_password . "\n" .
+            'REDIS_PORT=' . $request->redis_port . "\n\n" .
+            'MAIL_DRIVER=' . $request->mail_driver . "\n" .
+            'MAIL_HOST=' . $request->mail_host . "\n" .
+            'MAIL_PORT=' . $request->mail_port . "\n" .
+            'MAIL_USERNAME=' . $request->mail_username . "\n" .
+            'MAIL_PASSWORD=' . $request->mail_password . "\n" .
+            'MAIL_ENCRYPTION=' . $request->mail_encryption . "\n\n" .
+            'PUSHER_APP_ID=' . $request->pusher_app_id . "\n" .
+            'PUSHER_APP_KEY=' . $request->pusher_app_key . "\n" .
+            'PUSHER_APP_SECRET=' . $request->pusher_app_secret;
 
         return $data;
     }
-
     /**
      * Generate a new Application Key
      *

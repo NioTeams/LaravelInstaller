@@ -1,15 +1,15 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
-use Softnio\LaravelInstaller\Helpers\EnvironmentManager;
-use Softnio\LaravelInstaller\Events\EnvironmentSaved;
-use Validator;
-use DB;
 use Exception;
+use Validator;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
+use Nio\LaravelInstaller\Events\EnvironmentSaved;
+use Nio\LaravelInstaller\Helpers\EnvironmentManager;
 
 class EnvironmentController extends Controller
 {
@@ -48,7 +48,6 @@ class EnvironmentController extends Controller
         return view('vendor.installer.environment-wizard', compact('envConfig'));
     }
 
-    
     /**
      * Display the Environment page.
      *
@@ -69,12 +68,53 @@ class EnvironmentController extends Controller
      */
     public function saveClassic(Request $input, Redirector $redirect)
     {
+        if( ! $this->EnvironmentManager->checkIsEnvFileWritable() ){
+            session(['envConfigData' => $input->get('envConfig') ]);
+            return $redirect->route('LaravelInstaller::environmentManual')
+                            ->with(['message' => trans('installer_messages.environment.errors') ]);
+        }
         $message = $this->EnvironmentManager->saveFileClassic($input);
         event(new EnvironmentSaved($input));
         return $redirect->route('LaravelInstaller::environmentClassic')
                         ->with(['message' => $message]);
     }
 
+    /**
+     * Processes the newly saved environment configuration (Form Wizard).
+     *
+     * @param Request $request
+     * @param Redirector $redirect
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveWizard(Request $request, Redirector $redirect)
+    {
+        $rules = config('installer.environment.form.rules');
+        $messages = [
+            'environment_custom.required_if' => trans('installer_messages.environment.wizard.form.name_required'),
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return $redirect->route('LaravelInstaller::environmentWizard')->withInput()->withErrors($validator->errors());
+        }
+
+        if ( ! $this->checkDatabaseConnectionForProvidedData($request)) {
+            return $redirect->route('LaravelInstaller::environmentWizard')->withInput()->withErrors([
+                'database_connection' => trans('installer_messages.environment.wizard.form.db_connection_failed'),
+            ]);
+        }
+
+        if( ! $this->EnvironmentManager->checkIsEnvFileWritable() ){
+            session(['envConfigData' => $this->EnvironmentManager->fileData($request)]);
+            return $redirect->route('LaravelInstaller::environmentManual')
+                            ->with(['message' => trans('installer_messages.environment.errors') ]);
+        }
+
+        $results = $this->EnvironmentManager->saveFileWizard($request);
+        event(new EnvironmentSaved($request));
+        return $redirect->route('LaravelInstaller::database')
+                        ->with(['results' => $results]);
+    }
 
     /**
      * Display the Environment page.
@@ -104,73 +144,57 @@ class EnvironmentController extends Controller
      */
     public function saveManual(Request $input, Redirector $redirect)
     {
-        $results = $this->EnvironmentManager->saveFileClassic($input);
-        
-        $message = (isset($results['message']) ? $results['message'] : '');
-        $response = (isset($results['response']) ? $results['response'] : '');
-
-        if($response == true){
-            try {
-                \DB::connection()->getPdo();
-                if(\DB::connection()->getDatabaseName()){
-                    session()->forget('envConfigData');
-                    event(new EnvironmentSaved($input));
-                    return $redirect->route('LaravelInstaller::environmentManual')
-                        ->with(['message' => $message, 'showInstallButton' => true]);
-                }else{
-                    return $redirect->route('LaravelInstaller::environmentManual')
-                        ->with(['message' => 'Wrong database connection!']);
-                }
-            } catch (\Exception $e) {
+        try {
+            DB::connection()->getPdo();
+            if(DB::connection()->getDatabaseName()){
+                session()->forget('envConfigData');
+                event(new EnvironmentSaved($input));
+                return $redirect->route('LaravelInstaller::database');
+            }else{
                 return $redirect->route('LaravelInstaller::environmentManual')
-                        ->with(['message' => 'Wrong database connection!']);
+                    ->with(['message' => trans('installer_messages.environment.db_connection_error')]);
             }
-        }else{
+        } catch (\Exception $e) {
             return $redirect->route('LaravelInstaller::environmentManual')
-                        ->with(['message' => $message]);
+                    ->with(['message' => trans('installer_messages.environment.db_connection_error')]);
         }
+        return $redirect->route('LaravelInstaller::environmentManual')
+                        ->with(['message' => trans('installer_messages.environment.db_connection_error')]);
     }
 
     /**
-     * Processes the newly saved environment configuration (Form Wizard).
+     * TODO: We can remove this code if PR will be merged: https://github.com/Nio/LaravelInstaller/pull/162
+     * Validate database connection with user credentials (Form Wizard).
      *
      * @param Request $request
-     * @param Redirector $redirect
-     * @return \Illuminate\Http\RedirectResponse
+     * @return bool
      */
-    public function saveWizard(Request $request, Redirector $redirect)
+    private function checkDatabaseConnectionForProvidedData(Request $request)
     {
-        $rules = config('installer.environment.form.rules');
-        $messages = [
-            'environment_custom.required_if' => trans('installer_messages.environment.wizard.form.name_required'),
+        $connection = $request->input('database_connection');
+
+        $settings = config("database.connections.$connection");
+
+        $configArray = [
+            'database' => [
+                'connections' => [
+                    'installer_test' => array_merge($settings, [
+                        'driver' => $connection,
+                        'host' => $request->input('database_hostname'),
+                        'port' => $request->input('database_port'),
+                        'database' => $request->input('database_name'),
+                        'username' => $request->input('database_username'),
+                        'password' => $request->input('database_password'),
+                    ]),
+                ],
+            ],
         ];
-
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            session()->flash('form_errors', trans('installer_messages.environment.form_errors'));
-            return view('vendor.installer.environment-wizard', compact('errors', 'envConfig'));
-        }
-        if(testDatabaseConnection($request->database_hostname, $request->database_username, $request->database_password, $request->database_name)){
-
-            $results = $this->EnvironmentManager->saveFileWizard($request);
-
-            $message = (isset($results['message']) ? $results['message'] : '');
-            $response = (isset($results['response']) ? $results['response'] : '');
-
-            if($response == false){
-                session(['envConfigData' => $this->EnvironmentManager->fileData($request)]);
-                return $redirect->route('LaravelInstaller::environmentManual')
-                ->with(['message' => empty($message) ? trans('installer_messages.environment.errors') : $message]);
-            }
-
-            event(new EnvironmentSaved($request));
-
-            return $redirect->route('LaravelInstaller::database')
-                            ->with(['results' => $results]);
-        }else{
-            return $redirect->route('LaravelInstaller::environmentWizard')->with(['db_errors' => trans('installer_messages.environment.db_connection_error')]);
+        config($configArray);
+        try {
+            DB::connection('installer_test')->getPdo();
+            return true;
+        } catch (Exception $e) {
+            return false;
         }
     }
 }

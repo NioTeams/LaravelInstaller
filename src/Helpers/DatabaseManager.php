@@ -1,12 +1,12 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Helpers;
+namespace Nio\LaravelInstaller\Helpers;
 
 use Exception;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\SQLiteConnection;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class DatabaseManager
@@ -33,16 +33,15 @@ class DatabaseManager
      */
     private function migrate(BufferedOutput $outputLog)
     {
-        try{
-            Artisan::call('migrate', ["--force"=> true], $outputLog);
-        }
-        catch(Exception $e){
+        try {
+            Artisan::call('migrate', ['--force'=> true], $outputLog);
+        } catch (Exception $e) {
             return $this->response($e->getMessage(), 'error', $outputLog);
         }
-
-        return $this->seed( $this->additionalCommand($outputLog) );
+        $this->additionalCommand($outputLog);
+        return $this->seed($outputLog);
     }
-
+	
     /**
      * Run the additional artisan command after migration
      *
@@ -58,7 +57,7 @@ class DatabaseManager
                     Artisan::call("{$command}", [],  $outputLog);
                 }
                 catch(Exception $e){
-                    info($e->getMessage()); // save to log
+                    $outputLog->write( $e->getMessage() );
                 }
             }
         }
@@ -73,10 +72,9 @@ class DatabaseManager
      */
     private function seed(BufferedOutput $outputLog)
     {
-        try{
+        try {
             Artisan::call('db:seed', ['--force' => true], $outputLog);
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return $this->response($e->getMessage(), 'error', $outputLog);
         }
 
@@ -91,12 +89,12 @@ class DatabaseManager
      * @param \Symfony\Component\Console\Output\BufferedOutput $outputLog
      * @return array
      */
-    private function response($message, $status = 'danger', BufferedOutput $outputLog)
+    private function response($message, $status, BufferedOutput $outputLog)
     {
         return [
             'status' => $status,
             'message' => $message,
-            'dbOutputLog' => $outputLog->fetch()
+            'dbOutputLog' => $outputLog->fetch(),
         ];
     }
 
@@ -107,13 +105,13 @@ class DatabaseManager
      */
     private function sqlite(BufferedOutput $outputLog)
     {
-        if(DB::connection() instanceof SQLiteConnection) {
+        if (DB::connection() instanceof SQLiteConnection) {
             $database = DB::connection()->getDatabaseName();
-            if(!file_exists($database)) {
+            if (! file_exists($database)) {
                 touch($database);
                 DB::reconnect(Config::get('database.default'));
             }
-            $outputLog->write('Using SqlLite database: ' . $database, 1);
+            $outputLog->write('Using SqlLite database: '.$database, 1);
         }
     }
 }

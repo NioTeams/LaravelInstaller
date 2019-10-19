@@ -8,6 +8,10 @@
             "email": "info@softnio.com"
         },
         {
+            "name": "Saiful Alam",
+            "email": "msa4rakib@gmail.com"
+        },
+        {
             "name": "Rachid Laasri",
             "email": "rashidlaasri@gmail.com"
         },
@@ -21,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Softnio\\LaravelInstaller\\": "src/"
+            "Nio\\LaravelInstaller\\": "src/"
         },
         "files": [
             "src/Helpers/functions.php"
@@ -30,7 +34,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Softnio\\LaravelInstaller\\Providers\\LaravelInstallerServiceProvider"
+                "Nio\\LaravelInstaller\\Providers\\LaravelInstallerServiceProvider"
             ]
         }
     },

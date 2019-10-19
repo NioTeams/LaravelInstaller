@@ -1,14 +1,14 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
 use Illuminate\Routing\Controller;
-use Softnio\LaravelInstaller\Helpers\InstalledFileManager;
-use Softnio\LaravelInstaller\Helpers\DatabaseManager;
+use Nio\LaravelInstaller\Helpers\DatabaseManager;
+use Nio\LaravelInstaller\Helpers\InstalledFileManager;
 
 class UpdateController extends Controller
 {
-    use \Softnio\LaravelInstaller\Helpers\MigrationsHelper;
+    use \Nio\LaravelInstaller\Helpers\MigrationsHelper;
 
     /**
      * Display the updater welcome page.

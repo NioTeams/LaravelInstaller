@@ -15,8 +15,8 @@
         <textarea class="textarea" name="envConfig">{{ $envConfig }}</textarea>
         <div class="buttons buttons--right">
             <button class="button button--light" type="submit">
-                <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
-                {!! trans('installer_messages.environment.classic.save') !!}
+            	<i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
+             	{!! trans('installer_messages.environment.classic.save') !!}
             </button>
         </div>
     </form>
