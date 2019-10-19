@@ -10,16 +10,6 @@
 @endsection
 
 @section('container')
-    @if(session()->has('db_errors'))
-    <div class="alert alert-danger">
-        <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> {{ session('db_errors') }}
-    </div>
-    @endif
-    @if(session()->has('form_errors'))
-    <div class="alert alert-danger">
-        <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> {{ session('form_errors') }}
-    </div>
-    @endif
     <div class="tabs tabs-full">
 
         <input id="tab1" type="radio" name="tabs" class="tab-input" checked />
@@ -35,13 +25,13 @@
             <br />
             {{ trans('installer_messages.environment.wizard.tabs.database') }}
         </label>
-
-        {{-- <input id="tab3" type="radio" name="tabs" class="tab-input" />
-        <label for="tab3" class="tab-label">
+        
+        <input id="tab3" type="radio" name="tabs" class="tab-input {{ config('installer.wizard.application') ?: 'd-none' }}" />
+        <label for="tab3" class="tab-label {{ config('installer.wizard.application') ?: 'd-none' }}">
             <i class="fa fa-cogs fa-2x fa-fw" aria-hidden="true"></i>
             <br />
             {{ trans('installer_messages.environment.wizard.tabs.application') }}
-        </label> --}}
+        </label>
 
         <form method="post" action="{{ route('LaravelInstaller::environmentSaveWizard') }}" class="tabs-wrap">
             <div class="tab" id="tab1content">
@@ -51,7 +41,7 @@
                     <label for="app_name">
                         {{ trans('installer_messages.environment.wizard.form.app_name_label') }}
                     </label>
-                    <input type="text" name="app_name" id="app_name" value="{{ env('APP_NAME', 'Laravel') }}" placeholder="{{ trans('installer_messages.environment.wizard.form.app_name_placeholder') }}" />
+                    <input type="text" name="app_name" id="app_name" value="{{ config('app.name', 'Laravel') }}" placeholder="{{ trans('installer_messages.environment.wizard.form.app_name_placeholder') }}" />
                     @if ($errors->has('app_name'))
                         <span class="error-block">
                             <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>
@@ -65,10 +55,10 @@
                         {{ trans('installer_messages.environment.wizard.form.app_environment_label') }}
                     </label>
                     <select name="environment" id="environment" onchange='checkEnvironment(this.value);'>
-                        <option value="local">{{ trans('installer_messages.environment.wizard.form.app_environment_label_local') }}</option>
+                        <option value="local" selected>{{ trans('installer_messages.environment.wizard.form.app_environment_label_local') }}</option>
                         <option value="development">{{ trans('installer_messages.environment.wizard.form.app_environment_label_developement') }}</option>
                         <option value="qa">{{ trans('installer_messages.environment.wizard.form.app_environment_label_qa') }}</option>
-                        <option value="production" selected>{{ trans('installer_messages.environment.wizard.form.app_environment_label_production') }}</option>
+                        <option value="production">{{ trans('installer_messages.environment.wizard.form.app_environment_label_production') }}</option>
                         <option value="other">{{ trans('installer_messages.environment.wizard.form.app_environment_label_other') }}</option>
                     </select>
                     <div id="environment_text_input" style="display: none;">
@@ -87,11 +77,11 @@
                         {{ trans('installer_messages.environment.wizard.form.app_debug_label') }}
                     </label>
                     <label for="app_debug_true">
-                        <input type="radio" name="app_debug" id="app_debug_true" value=true />
+                        <input type="radio" name="app_debug" id="app_debug_true" value=true checked />
                         {{ trans('installer_messages.environment.wizard.form.app_debug_label_true') }}
                     </label>
                     <label for="app_debug_false">
-                        <input type="radio" name="app_debug" id="app_debug_false" value=false checked />
+                        <input type="radio" name="app_debug" id="app_debug_false" value=false />
                         {{ trans('installer_messages.environment.wizard.form.app_debug_label_false') }}
                     </label>
                     @if ($errors->has('app_debug'))
@@ -128,7 +118,7 @@
                     <label for="app_url">
                         {{ trans('installer_messages.environment.wizard.form.app_url_label') }}
                     </label>
-                    <input type="url" name="app_url" id="app_url" value="{{ url('/') }}" readonly="readonly" placeholder="{{ trans('installer_messages.environment.wizard.form.app_url_placeholder') }}" />
+                    <input type="url" name="app_url" id="app_url" value="{{ url('/') }}" placeholder="{{ trans('installer_messages.environment.wizard.form.app_url_placeholder') }}" />
                     @if ($errors->has('app_url'))
                         <span class="error-block">
                             <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>
@@ -136,6 +126,7 @@
                         </span>
                     @endif
                 </div>
+                
                 <div class="form-group {{ $errors->has('is_https') ? ' has-error ' : '' }}">
                     <label for="is_https">
                         {{ __('Is HTTPS Enabled') }}
@@ -247,22 +238,25 @@
                         </span>
                     @endif
                 </div>
-
-                {{-- <div class="buttons">
+                
+                @if( config('installer.wizard.application') )
+                <div class="buttons">
                     <button class="button" onclick="showApplicationSettings();return false">
                         {{ trans('installer_messages.environment.wizard.form.buttons.setup_application') }}
                         <i class="fa fa-angle-right fa-fw" aria-hidden="true"></i>
                     </button>
-                </div> --}}
-
+                </div>
+                @else
                 <div class="buttons">
                     <button class="button" type="submit">
                         {{ trans('installer_messages.environment.wizard.form.buttons.install') }}
                         <i class="fa fa-angle-right fa-fw" aria-hidden="true"></i>
-                    </button>
+                    </button> <br>
+                    <a href="javascript:void(0)" onclick="showApplicationSettings();return false;" class="link">Advanced Setup</a>
                 </div>
+                @endif
             </div>
-            <div class="tab" id="tab3content">
+            <div class="tab {{ config('installer.wizard.application') ?: 'd-none' }}" id="tab3content">
                 <div class="block">
                     <input type="radio" name="appSettingsTabs" id="appSettingsTab1" value="null" checked />
                     <label for="appSettingsTab1">
@@ -270,7 +264,6 @@
                             {{ trans('installer_messages.environment.wizard.form.app_tabs.broadcasting_title') }}
                         </span>
                     </label>
-
                     <div class="info">
                         <div class="form-group {{ $errors->has('broadcast_driver') ? ' has-error ' : '' }}">
                             <label for="broadcast_driver">{{ trans('installer_messages.environment.wizard.form.app_tabs.broadcasting_label') }}
@@ -528,6 +521,7 @@
                     </button>
                 </div>
             </div>
+            
         </form>
 
     </div>
@@ -548,6 +542,8 @@
         }
         function showApplicationSettings() {
             document.getElementById('tab3').checked = true;
+            var element = document.getElementById("tab3content");
+            element.classList.remove("d-none");
         }
     </script>
 @endsection

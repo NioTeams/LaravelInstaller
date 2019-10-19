@@ -1,6 +1,6 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Events;
+namespace Nio\LaravelInstaller\Events;
 
 use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;

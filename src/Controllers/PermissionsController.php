@@ -1,13 +1,12 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
 use Illuminate\Routing\Controller;
-use Softnio\LaravelInstaller\Helpers\PermissionsChecker;
+use Nio\LaravelInstaller\Helpers\PermissionsChecker;
 
 class PermissionsController extends Controller
 {
-
     /**
      * @var PermissionsChecker
      */

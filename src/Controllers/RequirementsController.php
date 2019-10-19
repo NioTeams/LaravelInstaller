@@ -1,9 +1,9 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
 use Illuminate\Routing\Controller;
-use Softnio\LaravelInstaller\Helpers\RequirementsChecker;
+use Nio\LaravelInstaller\Helpers\RequirementsChecker;
 
 class RequirementsController extends Controller
 {

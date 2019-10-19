@@ -3535,5 +3535,7 @@ svg:not(:root) {
   border-radius: 3px 3px 0 0; }
 #tab3content .block:last-child {
   border-radius: 0 0 3px 3px; }
-
+.d-none {
+  display: none !important;
+}
 /*# sourceMappingURL=style.css.map */

@@ -1,12 +1,11 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Controllers;
+namespace Nio\LaravelInstaller\Controllers;
 
 use Illuminate\Routing\Controller;
 
 class WelcomeController extends Controller
 {
-
     /**
      * Display the installer welcome page.
      *
@@ -16,5 +15,4 @@ class WelcomeController extends Controller
     {
         return view('vendor.installer.welcome');
     }
-
 }

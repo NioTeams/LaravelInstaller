@@ -29,9 +29,9 @@
                         <i class="step__icon fa fa-server" aria-hidden="true"></i>
                     </li>
                     <li class="step__divider"></li>
-                    <li class="step__item {{ isActive('LaravelInstaller::environment')}} {{ isActive('LaravelInstaller::environmentWizard')}} {{ isActive('LaravelInstaller::environmentClassic')}} {{ isActive('LaravelInstaller::environmentManual')}}">
-                        @if(Request::is('install/environment') || Request::is('install/environment/wizard') || Request::is('install/environment/classic') || Request::is('install/environment/manual') )
-                            <a href="{{ route('LaravelInstaller::environmentWizard') }}">
+                    <li class="step__item {{ isActive('LaravelInstaller::environment')}} {{ isActive('LaravelInstaller::environmentWizard')}} {{ isActive('LaravelInstaller::environmentClassic')}}">
+                        @if(Request::is('install/environment') || Request::is('install/environment/wizard') || Request::is('install/environment/classic') )
+                            <a href="{{ route('LaravelInstaller::environment') }}">
                                 <i class="step__icon fa fa-cog" aria-hidden="true"></i>
                             </a>
                         @else
@@ -106,9 +106,11 @@
         <script type="text/javascript">
             var x = document.getElementById('error_alert');
             var y = document.getElementById('close_alert');
-            y.onclick = function() {
-                x.style.display = "none";
-            };
+            if( y ){
+                y.onclick = function() {
+                    x.style.display = "none";
+                };
+            }
         </script>
     </body>
 </html>

@@ -28,7 +28,7 @@ The current features are :
 
 ## Requirements
 
-* [Laravel 5.1, 5.2, 5.3, 5.4, or 5.5+](https://laravel.com/docs/installation)
+* [Laravel 5.1 - 5.8+](https://laravel.com/docs/installation)
 
 ## Installation
 

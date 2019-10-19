@@ -1,11 +1,11 @@
 <?php
 
-namespace Softnio\LaravelInstaller\Providers;
+namespace Nio\LaravelInstaller\Providers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Softnio\LaravelInstaller\Middleware\canInstall;
-use Softnio\LaravelInstaller\Middleware\canUpdate;
+use Nio\LaravelInstaller\Middleware\canUpdate;
+use Nio\LaravelInstaller\Middleware\canInstall;
 
 class LaravelInstallerServiceProvider extends ServiceProvider
 {
@@ -34,8 +34,8 @@ class LaravelInstallerServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        $router->middlewareGroup('install',[CanInstall::class]);
-        $router->middlewareGroup('update',[CanUpdate::class]);
+        $router->middlewareGroup('install', [CanInstall::class]);
+        $router->middlewareGroup('update', [CanUpdate::class]);
     }
 
     /**
