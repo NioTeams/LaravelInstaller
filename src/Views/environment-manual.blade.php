@@ -16,16 +16,15 @@
         @if ($checkConnection == false)
         <p class="alert"><strong>Copy the above code and replace the current code of ".env" file. Then refresh this page.</strong></p>
         @endif
-    </form>
-
-    @if( (! isset($environment['errors']) && session()->has('showInstallButton')) || $checkConnection == true)
-        <div class="buttons-container">
-            <a class="button float-right" href="{{ route('LaravelInstaller::database') }}">
+        @if( (! isset($environment['errors']) && session()->has('showInstallButton')) || $checkConnection == true)
+        <div class="buttons buttons--right">
+            <button class="button " type="submit">
                 <i class="fa fa-check fa-fw" aria-hidden="true"></i>
                 {!! trans('installer_messages.environment.classic.install') !!}
                 <i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i>
-            </a>
+            </button>
         </div>
     @endif
+    </form>
 
 @endsection
