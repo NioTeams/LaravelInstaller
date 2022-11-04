@@ -7,15 +7,18 @@ use Illuminate\Support\Facades\DB;
 trait MigrationsHelper
 {
     /**
-     * Get the migrations in /database/migrations.
+     * Get the migrations in /database/migrations and custom paths.
      *
      * @return array Array of migrations name, empty if no migrations are existing
      */
     public function getMigrations()
     {
-        $migrations = glob(database_path().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR.'*.php');
+        $migrator = app('migrator');
+        $paths = $migrator->paths();
+        array_push($paths, database_path('migrations'));
+        $migrations = $migrator->getMigrationFiles($paths);
 
-        return str_replace('.php', '', $migrations);
+        return $migrations;
     }
 
     /**
